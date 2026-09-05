@@ -1,0 +1,131 @@
+### Distributed Queue System - REST API Request Collection & Curl Cheatsheet
+### Host: http://localhost:3000
+
+### 1. Health Check
+# curl -i http://localhost:3000/health
+GET http://localhost:3000/health
+
+###
+
+### 2. Queue Statistics
+# curl -i http://localhost:3000/queues/stats
+GET http://localhost:3000/queues/stats
+
+###
+
+### 3. Submit a Normal Priority Job
+# curl -i -X POST http://localhost:3000/jobs \
+#   -H 'Content-Type: application/json' \
+#   -d '{"type":"demo-task","data":{"taskName":"Generate Report","records":150},"priority":5,"maxRetries":3}'
+POST http://localhost:3000/jobs
+Content-Type: application/json
+
+{
+  "type": "demo-task",
+  "data": {
+    "taskName": "Generate Report",
+    "records": 150
+  },
+  "priority": 5,
+  "maxRetries": 3
+}
+
+###
+
+### 4. Submit a High-Priority Job (Priority 10)
+# curl -i -X POST http://localhost:3000/jobs \
+#   -H 'Content-Type: application/json' \
+#   -d '{"type":"demo-task","data":{"taskName":"Security Alert Delivery","urgency":"critical"},"priority":10,"maxRetries":3}'
+POST http://localhost:3000/jobs
+Content-Type: application/json
+
+{
+  "type": "demo-task",
+  "data": {
+    "taskName": "Security Alert Delivery",
+    "urgency": "critical"
+  },
+  "priority": 10,
+  "maxRetries": 3
+}
+
+###
+
+### 5. Submit a Failing Job (shouldFail = true)
+# curl -i -X POST http://localhost:3000/jobs \
+#   -H 'Content-Type: application/json' \
+#   -d '{"type":"demo-task","data":{"taskName":"Payment Processing Failure","shouldFail":true},"priority":7,"maxRetries":2}'
+POST http://localhost:3000/jobs
+Content-Type: application/json
+
+{
+  "type": "demo-task",
+  "data": {
+    "taskName": "Payment Processing Failure",
+    "shouldFail": true
+  },
+  "priority": 7,
+  "maxRetries": 2
+}
+
+###
+
+### 6. Submit Invalid Job (Validation Error Test - Missing Data)
+# curl -i -X POST http://localhost:3000/jobs \
+#   -H 'Content-Type: application/json' \
+#   -d '{"type":"demo-task","priority":15}'
+POST http://localhost:3000/jobs
+Content-Type: application/json
+
+{
+  "type": "demo-task",
+  "priority": 15
+}
+
+###
+
+### 7. Get Job Details by ID (Replace <JOB_ID> with an actual job ID)
+# curl -i http://localhost:3000/jobs/<JOB_ID>
+GET http://localhost:3000/jobs/ba88b559-6213-45de-a0fd-dbca6282a37b
+
+###
+
+### 8. List All Jobs (Default Pagination: limit=20, offset=0)
+# curl -i "http://localhost:3000/jobs?limit=10&offset=0"
+GET http://localhost:3000/jobs?limit=10&offset=0
+
+###
+
+### 9. List Jobs Filtered by Status (e.g. pending, completed, processing, dead)
+# curl -i "http://localhost:3000/jobs?status=completed&limit=5"
+GET http://localhost:3000/jobs?status=completed&limit=5
+
+###
+
+### 10. Cancel a Pending Job (Replace <PENDING_JOB_ID>)
+# curl -i -X DELETE http://localhost:3000/jobs/<PENDING_JOB_ID>
+DELETE http://localhost:3000/jobs/some-pending-job-id
+
+###
+
+### 11. Retry a Dead Job from DLQ (via /jobs route)
+# curl -i -X POST http://localhost:3000/jobs/<DEAD_JOB_ID>/retry
+POST http://localhost:3000/jobs/some-dead-job-id/retry
+
+###
+
+### 12. List Dead-Letter Queue (DLQ) Jobs (Paginated, most recent first)
+# curl -i "http://localhost:3000/dlq?limit=10&offset=0"
+GET http://localhost:3000/dlq?limit=10&offset=0
+
+###
+
+### 13. Retry a DLQ Job (via /dlq route)
+# curl -i -X POST http://localhost:3000/dlq/<DEAD_JOB_ID>/retry
+POST http://localhost:3000/dlq/some-dead-job-id/retry
+
+###
+
+### 14. Permanently Purge a Job from DLQ
+# curl -i -X DELETE http://localhost:3000/dlq/<DEAD_JOB_ID>
+DELETE http://localhost:3000/dlq/some-dead-job-id

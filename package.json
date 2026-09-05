@@ -1,0 +1,36 @@
+{
+  "name": "distributed-queue-system",
+  "version": "1.0.0",
+  "description": "Standalone Redis-based priority queue engine in Node.js",
+  "main": "src/queue/priorityQueue.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test:api": "node src/api/verifyApi.js",
+    "test:failure": "node src/queue/failureTestHarness.js",
+    "test:reaper": "node src/recovery/verifyReaper.js",
+    "test:harness": "node src/queue/testHarness.js",
+    "worker": "node src/workers/runWorker.js",
+    "reaper": "node src/recovery/runReaper.js",
+    "monitor": "node src/monitoring/runMonitoringServer.js",
+    "enqueue": "node src/queue/enqueueTestJobs.js",
+    "dashboard:dev": "npm --prefix dashboard run dev",
+    "dashboard:build": "npm --prefix dashboard run build"
+  },
+  "keywords": [
+    "redis",
+    "priority-queue",
+    "ioredis",
+    "lua"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autocannon": "^8.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "ioredis": "^5.4.2",
+    "pg": "^8.23.0",
+    "ws": "^8.21.3",
+    "zod": "^4.5.4"
+  }
+}
